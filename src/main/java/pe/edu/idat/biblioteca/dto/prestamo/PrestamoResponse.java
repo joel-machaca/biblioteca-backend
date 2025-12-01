@@ -7,5 +7,6 @@ public record PrestamoResponse (
         LocalDate fechaPrestamo,
         LocalDate fechaEntrega,
         String libro,
-        String usuario
+        String usuario,
+        String estado
 ){}

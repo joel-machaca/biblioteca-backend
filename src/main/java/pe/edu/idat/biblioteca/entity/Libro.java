@@ -5,10 +5,13 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Min;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.List;
 
 
 @Getter
@@ -40,5 +43,6 @@ public class Libro {
     @Min(0)
     private Integer stock;
 
-
+    @OneToMany(mappedBy = "libro")
+    private List<Prestamo> prestamos;
 }

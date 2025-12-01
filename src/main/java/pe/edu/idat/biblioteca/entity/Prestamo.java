@@ -28,22 +28,19 @@ public class Prestamo {
     private Long idPrestamo;
 
     @Column(name = "fecha_prestamo",nullable = false)
-    @Temporal(TemporalType.DATE)
     private LocalDate fechaPrestamo;
 
     @Column(name = "fecha_entrega",nullable = false)
-    @Temporal(TemporalType.DATE)
     private LocalDate fechaEntrega;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_libro",nullable = false)
-    private Libro Libro;
+    private Libro libro;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_usuario",nullable = false)
-    private Usuario Usuario;
+    private Usuario usuario;
 
-
-
-
+    @Column(name = "estado", length = 20, nullable = false)
+    private String estado;
 }

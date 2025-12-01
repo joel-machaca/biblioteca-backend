@@ -6,5 +6,6 @@ public record PrestamoRequest (
         LocalDate fechaPrestamo,
         LocalDate fechaEntrega,
         Long idLibro,
-        Long idUsuario
+        Long idUsuario,
+        String estado
 ){}
