@@ -48,4 +48,22 @@ public class RolServiceImpl implements RolService {
 
         return rolMapper.toResponse(rol);
     }
+
+    @Override
+    public RolResponse updateRol(Long id, RolRequest rolRequest) {
+        Rol rol=rolRepository.findById(id)
+                .orElseThrow(()->new RuntimeException("rol inexistente: "+ id));
+
+        rolMapper.updateEntityFromRequest(rolRequest,rol);
+
+        return rolMapper.toResponse(rolRepository.save(rol));
+    }
+
+    @Override
+    public void deleteRol(Long id) {
+        Rol rol=rolRepository.findById(id)
+                .orElseThrow(()->new RuntimeException("rol inexistente: "+ id));
+
+        rolRepository.delete(rol);
+    }
 }

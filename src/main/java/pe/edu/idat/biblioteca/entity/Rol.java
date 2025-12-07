@@ -25,7 +25,4 @@ public class Rol {
 
     @Column(name = "nombre",length = 25,nullable = false)
     private String nombre;
-
-    @ManyToMany(mappedBy = "roles")
-    private Set<Usuario> usuarios;
 }

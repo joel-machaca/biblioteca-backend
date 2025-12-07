@@ -48,16 +48,40 @@ public class LibroServiceImpl implements LibroService {
     }
 
     @Override
-    public void actualizarStock(Long id, Integer newStock) {
-        if (newStock < 0) {
-            throw new RuntimeException("El stock no puede ser negativo");
+    public LibroResponse updateLibro(Long id, LibroRequest libroRequest) {
+        Libro libro = libroRepository.findById(id)
+                .orElseThrow(()-> new RuntimeException("libro no encontrado: "+ id));
+
+        libroMapper.updateEntityFromRequest(libroRequest, libro);
+
+        return libroMapper.toResponse(libroRepository.save(libro));
+    }
+
+    @Override
+    public void deleteLibro(Long id) {
+        Libro libro=libroRepository.findById(id)
+                .orElseThrow(()->new RuntimeException("libro inexistente: "+ id));
+
+        libroRepository.delete(libro);
+    }
+
+
+
+
+
+    @Override
+    public void reducirStock(Libro libro) {
+
+        if (libro.getStock() <= 0) {
+            throw new RuntimeException("No hay stock disponible para este libro");
         }
 
-        Libro libro = libroRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("No se encontró el libro con ID: " + id));
-
-        libro.setStock(newStock);
+        libro.setStock(libro.getStock() - 1);
         libroRepository.save(libro);
     }
 
+    public void aumentarStock(Libro libro) {
+        libro.setStock(libro.getStock() + 1);
+        libroRepository.save(libro);
+    }
 }

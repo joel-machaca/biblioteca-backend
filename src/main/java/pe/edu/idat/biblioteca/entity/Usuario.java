@@ -58,6 +58,4 @@ public class Usuario {
     )
     private Set<Rol> roles=new HashSet<>();
 
-    @OneToMany(mappedBy = "usuario")
-    private List<Prestamo> prestamos;
 }
