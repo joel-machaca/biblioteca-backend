@@ -17,6 +17,7 @@ import jakarta.validation.constraints.Email;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -42,12 +43,17 @@ public class Usuario {
     @Column(name = "telefono",length = 9,nullable = false)
     private String telefono;
 
-    @Email
     @Column(name = "email",length = 100,nullable = false,unique = true)
     private String email;
 
     @Column(name = "password",length = 100,nullable = false)
     private String password;
+
+    @Column(name = "enabled",nullable = false)
+    private Boolean enabled = true;
+
+    @Column(name = "fecha_creacion",nullable = false)
+    private LocalDate fechaCreacion;
 
 
     @ManyToMany(fetch = FetchType.EAGER)

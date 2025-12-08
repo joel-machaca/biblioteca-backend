@@ -2,6 +2,7 @@ package pe.edu.idat.biblioteca.dto.usuario;
 
 import pe.edu.idat.biblioteca.entity.Rol;
 
+import java.time.LocalDate;
 import java.util.Set;
 
 public record UsuarioResponse (
@@ -10,6 +11,8 @@ public record UsuarioResponse (
         String apellido,
         String telefono,
         String email,
-        Set<Rol> roles
+        String enabled,
+        Set<Rol> roles,
+        LocalDate fechaCreacion
 ){
 }

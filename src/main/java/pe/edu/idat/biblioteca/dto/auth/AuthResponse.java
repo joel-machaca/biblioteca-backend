@@ -1,4 +1,4 @@
-package pe.edu.idat.biblioteca.dto.usuario;
+package pe.edu.idat.biblioteca.dto.auth;
 
 public record AuthResponse (
         String token,

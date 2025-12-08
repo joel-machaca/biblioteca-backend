@@ -1,5 +1,6 @@
 package pe.edu.idat.biblioteca.service.impl;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pe.edu.idat.biblioteca.dto.prestamo.PrestamoRequest;
@@ -29,6 +30,7 @@ public class PrestamosServiceImpl implements PrestamosService {
     private final LibroService libroService;
 
 
+    @Transactional
     @Override
     public PrestamoResponse createPrestamo(PrestamoRequest prestamoRequest) {
         Libro libro =libroRepository.findById(prestamoRequest.idLibro())
