@@ -2,22 +2,24 @@ package pe.edu.idat.biblioteca.service.impl;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import pe.edu.idat.biblioteca.dto.UsuarioAdminRequest;
-import pe.edu.idat.biblioteca.dto.UsuarioAdminResponse;
+
+import pe.edu.idat.biblioteca.dto.auth.AuthResponse;
+import pe.edu.idat.biblioteca.dto.jwt.JwtResponse;
 import pe.edu.idat.biblioteca.dto.usuario.UsuarioRequest;
 import pe.edu.idat.biblioteca.dto.usuario.UsuarioResponse;
 import pe.edu.idat.biblioteca.entity.Rol;
 import pe.edu.idat.biblioteca.entity.Usuario;
-import pe.edu.idat.biblioteca.mapper.UsuarioAdminMapper;
+
 import pe.edu.idat.biblioteca.mapper.UsuarioMapper;
 import pe.edu.idat.biblioteca.repository.RolRepository;
 import pe.edu.idat.biblioteca.repository.UsuarioRepository;
+import pe.edu.idat.biblioteca.security.JwtUtil;
 import pe.edu.idat.biblioteca.service.UsuarioService;
 
+import java.time.LocalDate;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -26,22 +28,31 @@ public class UsuarioServiceImpl implements UsuarioService {
     private final UsuarioRepository usuarioRepository;
     private final RolRepository rolRepository;
     private final UsuarioMapper usuarioMapper;
-    private final UsuarioAdminMapper usuarioAdminMapper;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
 
     @Transactional
     @Override
-    public UsuarioResponse createAccount(UsuarioRequest usuarioRequest) {
+    public JwtResponse createAccount(UsuarioRequest usuarioRequest) {
         if(usuarioRepository.findByEmail(usuarioRequest.email()).isPresent()){
             throw new RuntimeException("el email ingresado ya esta registrado,intente otra vez");
         }
-        Usuario usuario = usuarioMapper.toEntity(usuarioRequest);
 
         Rol rol=rolRepository.findByNombre("USER")
                 .orElseThrow(()->new RuntimeException("rol USER no existe"));
+
+        Usuario usuario = usuarioMapper.toEntity(usuarioRequest);
+
+        usuario.setPassword(passwordEncoder.encode(usuarioRequest.password()));
+        usuario.setFechaCreacion(LocalDate.now());
         usuario.getRoles().add(rol);
 
+        usuarioRepository.save(usuario);
 
-        return usuarioMapper.toResponse(usuarioRepository.save(usuario));
+        String accessToken=jwtUtil.generateToken(usuario.getEmail());
+        String refreshToken= jwtUtil.generateRefreshToken(usuario.getEmail());
+
+        return new JwtResponse(accessToken,refreshToken,usuario.getEmail(),rol.getNombre());
     }
 
 

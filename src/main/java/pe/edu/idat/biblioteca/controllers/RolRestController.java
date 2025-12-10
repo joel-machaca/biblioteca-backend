@@ -20,7 +20,7 @@ import pe.edu.idat.biblioteca.service.RolService;
 import java.util.List;
 
 @RestController
-@RequestMapping("v1/rol")
+@RequestMapping("/v1/rol")
 @RequiredArgsConstructor
 public class RolRestController {
 

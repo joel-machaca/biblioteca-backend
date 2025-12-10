@@ -18,7 +18,7 @@ import pe.edu.idat.biblioteca.service.PrestamosService;
 import java.util.List;
 
 @RestController
-@RequestMapping("v1/prestamo")
+@RequestMapping("/v1/prestamo")
 @RequiredArgsConstructor
 public class PrestamoRestController {
 
@@ -33,6 +33,7 @@ public class PrestamoRestController {
     public ResponseEntity<PrestamoResponse>findById(@PathVariable Long id){
         return new ResponseEntity<>(prestamosService.findById(id),HttpStatus.OK);
     }
+
     @GetMapping()
     public ResponseEntity<List<PrestamoResponse>>listarPrestamo(){
         return new ResponseEntity<>(prestamosService.listarPrestamo(),HttpStatus.OK);

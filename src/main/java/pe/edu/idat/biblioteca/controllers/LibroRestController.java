@@ -20,7 +20,7 @@ import pe.edu.idat.biblioteca.service.LibroService;
 import java.util.List;
 
 @RestController
-@RequestMapping("v1/libro")
+@RequestMapping("/v1/libro")
 @RequiredArgsConstructor
 public class LibroRestController {
     private final LibroService libroService;

@@ -11,13 +11,12 @@ import org.springframework.stereotype.Service;
 import pe.edu.idat.biblioteca.entity.Usuario;
 import pe.edu.idat.biblioteca.repository.UsuarioRepository;
 
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class UsuarioDetailServiceImpl implements UserDetailsService {
+public class UserDetailServiceImpl implements UserDetailsService {
 
     private final UsuarioRepository usuarioRepository;
 
