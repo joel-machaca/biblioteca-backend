@@ -39,4 +39,5 @@ public class UsuarioDetailServiceImpl implements UserDetailsService {
     }
 
 
+
 }
