@@ -12,6 +12,8 @@ import pe.edu.idat.biblioteca.dto.usuario.UsuarioResponse;
 import pe.edu.idat.biblioteca.entity.Rol;
 import pe.edu.idat.biblioteca.entity.Usuario;
 
+import pe.edu.idat.biblioteca.exception.RolNotFoundException;
+import pe.edu.idat.biblioteca.exception.UsuarioNotFoundException;
 import pe.edu.idat.biblioteca.mapper.UsuarioMapper;
 import pe.edu.idat.biblioteca.repository.RolRepository;
 import pe.edu.idat.biblioteca.repository.UsuarioRepository;
@@ -35,11 +37,11 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     public JwtResponse createAccount(UsuarioRequest usuarioRequest) {
         if(usuarioRepository.findByEmail(usuarioRequest.email()).isPresent()){
-            throw new RuntimeException("el email ingresado ya esta registrado,intente otra vez");
+            throw new UsuarioNotFoundException("el email ingresado ya esta registrado,intente otra vez");
         }
 
         Rol rol=rolRepository.findByNombre("USER")
-                .orElseThrow(()->new RuntimeException("rol USER no existe"));
+                .orElseThrow(()->new RolNotFoundException("rol USER no existe"));
 
         Usuario usuario = usuarioMapper.toEntity(usuarioRequest);
 
@@ -60,7 +62,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     public UsuarioResponse findById(Long id) {
         Usuario usuario=usuarioRepository.findById(id)
-                .orElseThrow(()-> new RuntimeException("no es encontro el usuario"));
+                .orElseThrow(()-> new UsuarioNotFoundException("no es encontro el usuario"));
         return usuarioMapper.toResponse(usuario);
     }
 
@@ -76,7 +78,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     public UsuarioResponse updateUsuario(Long id, UsuarioRequest usuarioRequest) {
         Usuario usuario=usuarioRepository.findById(id)
-                .orElseThrow(()-> new RuntimeException("usuario inexistente:" + id));
+                .orElseThrow(()-> new UsuarioNotFoundException("usuario inexistente:" + id));
 
         usuarioMapper.updateEntityFromRequest(usuarioRequest,usuario);
 
@@ -86,7 +88,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     public void deleteUsuario(Long id) {
         Usuario usuario=usuarioRepository.findById(id)
-                .orElseThrow(()-> new RuntimeException("usuario inexistente:" + id));
+                .orElseThrow(()-> new UsuarioNotFoundException("usuario inexistente:" + id));
 
         usuarioRepository.delete(usuario);
     }

@@ -7,6 +7,8 @@ import pe.edu.idat.biblioteca.dto.rol.RolRequest;
 import pe.edu.idat.biblioteca.dto.rol.RolResponse;
 
 import pe.edu.idat.biblioteca.entity.Rol;
+import pe.edu.idat.biblioteca.exception.RolAlreadyExistsException;
+import pe.edu.idat.biblioteca.exception.RolNotFoundException;
 import pe.edu.idat.biblioteca.mapper.RolMapper;
 import pe.edu.idat.biblioteca.repository.RolRepository;
 import pe.edu.idat.biblioteca.service.RolService;
@@ -24,7 +26,7 @@ public class RolServiceImpl implements RolService {
     @Override
     public RolResponse createRol(RolRequest rolRequest) {
         if(rolRepository.findByNombre(rolRequest.nombre()).isPresent()){
-            throw new RuntimeException("El rol ya existe");
+            throw new RolAlreadyExistsException("El rol ya existe");
         }
         Rol rol =rolMapper.toEntity(rolRequest);
 
@@ -44,7 +46,7 @@ public class RolServiceImpl implements RolService {
     @Override
     public RolResponse findById(Long id) {
         Rol rol =rolRepository.findById(id)
-                .orElseThrow(()->new RuntimeException("rol con el id "+id+" no econtrado"));
+                .orElseThrow(()->new RolNotFoundException("rol no econtrado"+id));
 
         return rolMapper.toResponse(rol);
     }

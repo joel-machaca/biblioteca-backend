@@ -8,6 +8,9 @@ import pe.edu.idat.biblioteca.dto.prestamo.PrestamoResponse;
 import pe.edu.idat.biblioteca.entity.Libro;
 import pe.edu.idat.biblioteca.entity.Prestamo;
 import pe.edu.idat.biblioteca.entity.Usuario;
+import pe.edu.idat.biblioteca.exception.LibroNotFoundException;
+import pe.edu.idat.biblioteca.exception.PrestamoNotFoundException;
+import pe.edu.idat.biblioteca.exception.UsuarioNotFoundException;
 import pe.edu.idat.biblioteca.mapper.PrestamoMapper;
 import pe.edu.idat.biblioteca.repository.LibroRepository;
 import pe.edu.idat.biblioteca.repository.PrestamoRepository;
@@ -34,10 +37,10 @@ public class PrestamosServiceImpl implements PrestamosService {
     @Override
     public PrestamoResponse createPrestamo(PrestamoRequest prestamoRequest) {
         Libro libro =libroRepository.findById(prestamoRequest.idLibro())
-                        .orElseThrow(()->new RuntimeException("libro inexistente: "+ prestamoRequest.idLibro()));
+                        .orElseThrow(()->new LibroNotFoundException("libro no encontrado: "+ prestamoRequest.idLibro()));
 
         Usuario usuario=usuarioRepository.findById(prestamoRequest.idUsuario())
-                        .orElseThrow(()->new RuntimeException("usuario inexistente: "+prestamoRequest.idUsuario()));
+                        .orElseThrow(()->new UsuarioNotFoundException("usuario no encontrado: "+prestamoRequest.idUsuario()));
 
         libroService.reducirStock(libro);
         Prestamo prestamo = prestamoMapper.toEntity(prestamoRequest);
@@ -52,7 +55,7 @@ public class PrestamosServiceImpl implements PrestamosService {
     @Override
     public PrestamoResponse findById(Long id) {
         Prestamo prestamo = prestamoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Préstamo no encontrado: "+ id));
+                .orElseThrow(() -> new PrestamoNotFoundException("Préstamo no encontrado: "+ id));
         return prestamoMapper.toResponse(prestamo);
     }
 
@@ -75,7 +78,7 @@ public class PrestamosServiceImpl implements PrestamosService {
     @Override
     public void devolverPrestamo(Long id) {
         Prestamo prestamo = prestamoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Préstamo no encontrado"));
+                .orElseThrow(() -> new PrestamoNotFoundException("Préstamo no encontrado"));
 
         Libro libro =prestamo.getLibro();
 

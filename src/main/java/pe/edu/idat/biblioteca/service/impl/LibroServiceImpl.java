@@ -6,6 +6,9 @@ import org.springframework.stereotype.Service;
 import pe.edu.idat.biblioteca.dto.libro.LibroRequest;
 import pe.edu.idat.biblioteca.dto.libro.LibroResponse;
 import pe.edu.idat.biblioteca.entity.Libro;
+import pe.edu.idat.biblioteca.exception.LibroAlreadyExistsException;
+import pe.edu.idat.biblioteca.exception.LibroNotFoundException;
+import pe.edu.idat.biblioteca.exception.StockInsuficienteException;
 import pe.edu.idat.biblioteca.mapper.LibroMapper;
 import pe.edu.idat.biblioteca.repository.LibroRepository;
 import pe.edu.idat.biblioteca.service.LibroService;
@@ -23,7 +26,7 @@ public class LibroServiceImpl implements LibroService {
     @Override
     public LibroResponse createLibro(LibroRequest libroRequest) {
         if(libroRepository.findByTitulo(libroRequest.titulo()).isPresent()){
-            throw new RuntimeException("este libro ya existe ");
+            throw new LibroAlreadyExistsException("este libro ya existe ");
         }
         Libro libro=libroMapper.toEntity(libroRequest);
         return libroMapper.toResponse(libroRepository.save(libro));
@@ -33,7 +36,7 @@ public class LibroServiceImpl implements LibroService {
     @Override
     public LibroResponse findById(Long id) {
         Libro libro=libroRepository.findById(id)
-                .orElseThrow(()->new RuntimeException("no se encontro el libro con id: "+id));
+                .orElseThrow(()->new LibroNotFoundException("no se encontro el libro con id: "+id));
 
         return libroMapper.toResponse(libro);
     }
@@ -50,7 +53,7 @@ public class LibroServiceImpl implements LibroService {
     @Override
     public LibroResponse updateLibro(Long id, LibroRequest libroRequest) {
         Libro libro = libroRepository.findById(id)
-                .orElseThrow(()-> new RuntimeException("libro no encontrado: "+ id));
+                .orElseThrow(()-> new LibroNotFoundException("libro no encontrado: "+ id));
 
         libroMapper.updateEntityFromRequest(libroRequest, libro);
 
@@ -60,7 +63,7 @@ public class LibroServiceImpl implements LibroService {
     @Override
     public void deleteLibro(Long id) {
         Libro libro=libroRepository.findById(id)
-                .orElseThrow(()->new RuntimeException("libro inexistente: "+ id));
+                .orElseThrow(()->new LibroNotFoundException("libro no encontrado: "+ id));
 
         libroRepository.delete(libro);
     }
@@ -73,7 +76,7 @@ public class LibroServiceImpl implements LibroService {
     public void reducirStock(Libro libro) {
 
         if (libro.getStock() <= 0) {
-            throw new RuntimeException("No hay stock disponible para este libro");
+            throw new StockInsuficienteException("No hay stock disponible para este libro");
         }
 
         libro.setStock(libro.getStock() - 1);

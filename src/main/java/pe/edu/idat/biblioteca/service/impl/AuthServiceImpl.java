@@ -3,6 +3,7 @@ package pe.edu.idat.biblioteca.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import pe.edu.idat.biblioteca.dto.auth.AuthResponse;
@@ -10,6 +11,8 @@ import pe.edu.idat.biblioteca.dto.auth.LoginRequest;
 import pe.edu.idat.biblioteca.dto.jwt.JwtResponse;
 import pe.edu.idat.biblioteca.dto.jwt.RefreshTokenRequest;
 import pe.edu.idat.biblioteca.entity.Usuario;
+import pe.edu.idat.biblioteca.exception.InvalidRefreshException;
+import pe.edu.idat.biblioteca.exception.UsuarioNotFoundException;
 import pe.edu.idat.biblioteca.repository.RolRepository;
 import pe.edu.idat.biblioteca.repository.UsuarioRepository;
 import pe.edu.idat.biblioteca.security.JwtUtil;
@@ -29,7 +32,7 @@ public class AuthServiceImpl implements AuthService {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.email(),loginRequest.password()));
 
         Usuario usuario= usuarioRepository.findByEmail(loginRequest.email())
-                .orElseThrow(()-> new RuntimeException("el usuario no existe"));
+                .orElseThrow(()-> new UsernameNotFoundException("el usuario no existe"));
 
         String role=usuario.getRoles().iterator().next().getNombre();
         String accessToken=jwtUtil.generateToken(usuario.getEmail());
@@ -41,11 +44,11 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public JwtResponse refreshToken(RefreshTokenRequest request) {
         if(!jwtUtil.validateToken(request.refreshToken())){
-            throw new RuntimeException("refresh token invalido");
+            throw new InvalidRefreshException("refresh token invalido");
         }
-        String email=jwtUtil.ExtractEmail(request.refreshToken());
+        String email=jwtUtil.extractEmail(request.refreshToken());
         Usuario usuario =usuarioRepository.findByEmail(email)
-                .orElseThrow(()->new RuntimeException("el usuario ingresado no existe"));
+                .orElseThrow(()->new UsuarioNotFoundException("el usuario ingresado no existe"));
 
         String accessToken=jwtUtil.generateToken(usuario.getEmail());
         String refreshToken= jwtUtil.generateRefreshToken(usuario.getEmail());
@@ -54,21 +57,4 @@ public class AuthServiceImpl implements AuthService {
         return new JwtResponse(accessToken,refreshToken,usuario.getEmail(),role);
     }
 
-
-
-
-
-
-    /*@Override
-    public AuthResponse login(LoginRequest loginRequest) {
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.email(),loginRequest.password()));
-
-        Usuario usuario= usuarioRepository.findByEmail(loginRequest.email())
-                .orElseThrow(()-> new RuntimeException("el usuario no existe"));
-
-        String role=usuario.getRoles().iterator().next().getNombre();
-
-        return new AuthResponse("login correcto",usuario.getEmail(),role);
-
-    }*/
 }

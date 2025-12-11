@@ -25,7 +25,7 @@ public class JwtUtil {
     @Value("${jwt.refresh.expiration}")
     private Long refreshExpiration;
 
-    public Key getSigingKey(){
+    public Key getSigningKey(){
 
         return Keys.hmacShaKeyFor(secret.getBytes());
     }
@@ -35,7 +35,7 @@ public class JwtUtil {
                 .setSubject(email)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis()+expiration))
-                .signWith(getSigingKey(), SignatureAlgorithm.HS256)
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
@@ -44,34 +44,27 @@ public class JwtUtil {
                 .setSubject(email)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis()+refreshExpiration))
-                .signWith(getSigingKey(), SignatureAlgorithm.HS256)
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
 
 
-    public String ExtractEmail(String token) {
+    public String extractEmail(String token) {
         Claims claims=Jwts.parserBuilder()
-                .setSigningKey(getSigingKey())
+                .setSigningKey(getSigningKey())
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
 
         return claims.getSubject();
 
-
-//        return Jwts.parserBuilder()
-//                .setSigningKey(getSigingKey()) // aquí va la clave
-//                .build()
-//                .parseClaimsJws(token)
-//                .getBody()
-//                .getSubject();
     }
 
     public boolean validateToken(String token){
         try{
             Jwts.parserBuilder()
-                    .setSigningKey(getSigingKey())
+                    .setSigningKey(getSigningKey())
                     .build()
                     .parseClaimsJws(token);
             return true;
@@ -81,14 +74,4 @@ public class JwtUtil {
 
 
     }
-
-
-    //    public String ExtractEmail(String token){
-//        return Jwts.parserBuilder()
-//                .build()
-//                .setSigningKey(getSigingKey())
-//                .parseClaimsJwt(token)
-//                .getBody()
-//                .getSubject();
-//    }
 }

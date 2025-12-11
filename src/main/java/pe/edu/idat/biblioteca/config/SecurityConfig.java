@@ -10,11 +10,12 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import pe.edu.idat.biblioteca.security.CustomAccessDeniedHandler;
+import pe.edu.idat.biblioteca.security.JwtAuthEntryPoint;
 import pe.edu.idat.biblioteca.security.JwtAuthFilter;
 import pe.edu.idat.biblioteca.service.impl.UserDetailServiceImpl;
 
@@ -23,6 +24,8 @@ import pe.edu.idat.biblioteca.service.impl.UserDetailServiceImpl;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
+    private final JwtAuthEntryPoint jwtAuthEntryPoint;
+    private final CustomAccessDeniedHandler accessDeniedHandler;
     private final UserDetailServiceImpl userDetailsService;
     private final JwtAuthFilter jwtAuthFilter;
 
@@ -47,13 +50,12 @@ public class SecurityConfig {
     }
 
 
-
-//    avanzar las rutas protegidas pendientes (tratar de enviar de nuevvo)
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity)throws Exception{
         httpSecurity
                 .csrf(csrf->csrf.disable())
                 .authorizeHttpRequests(auth->auth
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers("/v1/auth/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/v1/usuario").permitAll()
                         .requestMatchers("/v1/rol/**").hasRole("ADMIN")
@@ -62,7 +64,11 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET,"/v1/libro/{id}","/v1/usuario/{id}","/v1/prestamo/usuario/{idUsuario}").hasAnyRole("ADMIN","USER")
                         .requestMatchers(HttpMethod.PUT,"/v1/libro/{id}","/v1/usuario/{id}").hasAnyRole("ADMIN","USER")
                         .requestMatchers(HttpMethod.DELETE,"/v1/libro/{id}","/v1/usuario/{id}").hasRole("ADMIN")
-                        .anyRequest().authenticated());
+                        .anyRequest().authenticated())
+                        .exceptionHandling(ex->ex
+                                .accessDeniedHandler(accessDeniedHandler)
+                                .authenticationEntryPoint(jwtAuthEntryPoint)
+                        );
         httpSecurity.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         httpSecurity.formLogin(form->form.disable());
 
