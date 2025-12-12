@@ -6,6 +6,7 @@ public record PrestamoResponse (
         Long idPrestamo,
         LocalDate fechaPrestamo,
         LocalDate fechaEntrega,
+        LocalDate fechaEntregada,
         String libro,
         String usuario,
         String estado

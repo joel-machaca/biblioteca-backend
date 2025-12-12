@@ -9,7 +9,8 @@ import pe.edu.idat.biblioteca.entity.Usuario;
 
 @Mapper(componentModel = "spring")
 public interface UsuarioAdminMapper {
-//    UsuarioAdminResponse toResponse(Usuario usuario);
-//
-//    Usuario toEntity(UsuarioAdminRequest usuarioAdminRequest);
+
+    UsuarioAdminResponse toResponse(Usuario usuario);
+
+    Usuario toEntity(UsuarioAdminRequest usuarioAdminRequest);
 }

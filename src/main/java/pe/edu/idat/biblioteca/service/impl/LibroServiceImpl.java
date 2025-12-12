@@ -1,8 +1,8 @@
 package pe.edu.idat.biblioteca.service.impl;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pe.edu.idat.biblioteca.dto.libro.LibroRequest;
 import pe.edu.idat.biblioteca.dto.libro.LibroResponse;
 import pe.edu.idat.biblioteca.entity.Libro;
@@ -33,6 +33,7 @@ public class LibroServiceImpl implements LibroService {
     }
 
 
+    @Transactional(readOnly = true)
     @Override
     public LibroResponse findById(Long id) {
         Libro libro=libroRepository.findById(id)
@@ -41,6 +42,7 @@ public class LibroServiceImpl implements LibroService {
         return libroMapper.toResponse(libro);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<LibroResponse> listarLibros() {
         return libroRepository
@@ -50,6 +52,7 @@ public class LibroServiceImpl implements LibroService {
                 .toList();
     }
 
+    @Transactional
     @Override
     public LibroResponse updateLibro(Long id, LibroRequest libroRequest) {
         Libro libro = libroRepository.findById(id)
@@ -60,6 +63,7 @@ public class LibroServiceImpl implements LibroService {
         return libroMapper.toResponse(libroRepository.save(libro));
     }
 
+    @Transactional
     @Override
     public void deleteLibro(Long id) {
         Libro libro=libroRepository.findById(id)

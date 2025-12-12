@@ -1,8 +1,8 @@
 package pe.edu.idat.biblioteca.service.impl;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pe.edu.idat.biblioteca.dto.rol.RolRequest;
 import pe.edu.idat.biblioteca.dto.rol.RolResponse;
 
@@ -34,6 +34,7 @@ public class RolServiceImpl implements RolService {
 
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<RolResponse> listarRoles() {
         return rolRepository
@@ -43,6 +44,7 @@ public class RolServiceImpl implements RolService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     @Override
     public RolResponse findById(Long id) {
         Rol rol =rolRepository.findById(id)
@@ -51,6 +53,7 @@ public class RolServiceImpl implements RolService {
         return rolMapper.toResponse(rol);
     }
 
+    @Transactional
     @Override
     public RolResponse updateRol(Long id, RolRequest rolRequest) {
         Rol rol=rolRepository.findById(id)
@@ -61,6 +64,7 @@ public class RolServiceImpl implements RolService {
         return rolMapper.toResponse(rolRepository.save(rol));
     }
 
+    @Transactional(readOnly = true)
     @Override
     public void deleteRol(Long id) {
         Rol rol=rolRepository.findById(id)

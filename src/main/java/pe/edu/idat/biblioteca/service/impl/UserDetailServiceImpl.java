@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pe.edu.idat.biblioteca.entity.Usuario;
 import pe.edu.idat.biblioteca.repository.UsuarioRepository;
 
@@ -20,6 +21,7 @@ public class UserDetailServiceImpl implements UserDetailsService {
 
     private final UsuarioRepository usuarioRepository;
 
+    @Transactional(readOnly = true)
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         Usuario usuario= usuarioRepository.findByEmail(email)
@@ -36,7 +38,4 @@ public class UserDetailServiceImpl implements UserDetailsService {
                 .authorities(authorities)
                 .build();
     }
-
-
-
 }

@@ -6,6 +6,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pe.edu.idat.biblioteca.dto.auth.AuthResponse;
 import pe.edu.idat.biblioteca.dto.auth.LoginRequest;
 import pe.edu.idat.biblioteca.dto.jwt.JwtResponse;
@@ -27,6 +28,7 @@ public class AuthServiceImpl implements AuthService {
     private final JwtUtil jwtUtil;
 
 
+    @Transactional(readOnly = true)
     @Override
     public JwtResponse login(LoginRequest loginRequest) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.email(),loginRequest.password()));
@@ -41,6 +43,7 @@ public class AuthServiceImpl implements AuthService {
         return new JwtResponse(accessToken,refreshToken,usuario.getEmail(),role);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public JwtResponse refreshToken(RefreshTokenRequest request) {
         if(!jwtUtil.validateToken(request.refreshToken())){

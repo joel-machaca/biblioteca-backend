@@ -33,6 +33,9 @@ public class Prestamo {
     @Column(name = "fecha_entrega",nullable = false)
     private LocalDate fechaEntrega;
 
+    @Column(name = "fecha_entrega",nullable = false)
+    private LocalDate fechaEntregada;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_libro",nullable = false)
     private Libro libro;

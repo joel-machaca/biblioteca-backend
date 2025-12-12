@@ -1,8 +1,9 @@
 package pe.edu.idat.biblioteca.service.impl;
 
-import jakarta.transaction.Transactional;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pe.edu.idat.biblioteca.dto.prestamo.PrestamoRequest;
 import pe.edu.idat.biblioteca.dto.prestamo.PrestamoResponse;
 import pe.edu.idat.biblioteca.entity.Libro;
@@ -52,6 +53,7 @@ public class PrestamosServiceImpl implements PrestamosService {
         return prestamoMapper.toResponse(prestamoRepository.save(prestamo));
     }
 
+    @Transactional(readOnly = true)
     @Override
     public PrestamoResponse findById(Long id) {
         Prestamo prestamo = prestamoRepository.findById(id)
@@ -59,6 +61,7 @@ public class PrestamosServiceImpl implements PrestamosService {
         return prestamoMapper.toResponse(prestamo);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<PrestamoResponse> listarPrestamo() {
         return prestamoRepository.findAll()
@@ -67,6 +70,7 @@ public class PrestamosServiceImpl implements PrestamosService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<PrestamoResponse> listarPrestamoPorId(Long idUsuario) {
         return prestamoRepository.findByUsuario_IdUsuario(idUsuario)
@@ -75,6 +79,7 @@ public class PrestamosServiceImpl implements PrestamosService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     @Override
     public void devolverPrestamo(Long id) {
         Prestamo prestamo = prestamoRepository.findById(id)
@@ -84,6 +89,7 @@ public class PrestamosServiceImpl implements PrestamosService {
 
         libroService.aumentarStock(libro);
 
+        prestamo.setFechaEntregada(LocalDate.now());
         prestamo.setEstado("DEVUELTO");
         prestamoRepository.save(prestamo);
     }
